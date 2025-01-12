@@ -4,6 +4,10 @@ import math
 
 class Triangle(Figure):
     def __init__(self, a, b, c):
+        if a <= 0 or b <= 0 or c <= 0:
+            raise ValueError("Длины сторон треугольника должны быть положительными числами.")
+        if a + b <= c or a + c <= b or b + c <= a:
+            raise ValueError("Стороны не могут образовать треугольник.")
         self.a = a
         self.b = b
         self.c = c
