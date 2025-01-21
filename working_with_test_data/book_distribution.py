@@ -41,6 +41,8 @@ def distribute_books(books, users):
 
 
 distributed_users = distribute_books(books, users)
+with open('result.json', 'w', encoding='utf-8') as result_file:
+    json.dump(distributed_users, result_file, ensure_ascii=False, indent=4)
 
 json_result = json.dumps(distributed_users, ensure_ascii=False, indent=4)
 
