@@ -14,8 +14,14 @@ def read_books_from_csv(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            books.append(row)
-    return books
+            book_info = {
+                "title": row["Title"],
+                "author": row["Author"],
+                "pages": int(row["Pages"]) if row["Pages"] else 0,
+                "genre": row["Genre"]
+            }
+            books.append(book_info)
+        return books
 
 
 file_path_users = 'users.json'
@@ -45,12 +51,10 @@ def distribute_books(books, users):
         user_info = data['user_info']
         distributed_books = data['books']
         output.append({
-            "user": {
-                "_id": user_info["_id"],
-                "name": user_info["name"],
-                "age": user_info["age"],
-                "gender": user_info["gender"],
-            },
+            "name": user_info["name"],
+            "gender": user_info["gender"],
+            "address": user_info["address"],
+            "age": user_info["age"],
             "books": distributed_books
         })
 
