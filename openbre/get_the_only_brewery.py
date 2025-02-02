@@ -35,6 +35,13 @@ def test_non_existing_brewery():
     assert "can't access" in message, "Expected error message not found"
 
 
+state_min_breweries = {
+    "California": 25,
+    "Texas": 20,
+    "New York": 15
+}
+
+
 @pytest.mark.parametrize("state, expected_status_code, expected_length", [
     ("California", 200, None),
     ("Texas", 200, None),
@@ -47,21 +54,19 @@ def test_filter_breweries_by_state(state, expected_status_code, expected_length)
 
     assert response.status_code == expected_status_code, f'Expected status code {expected_status_code} but got {response.status_code}'
 
-    if expected_status_code == 200:
-        breweries = response.json()
+    breweries = response.json() if expected_status_code == 200 else []
 
-        if expected_length is not None:
-            assert len(breweries) >= 0, "Breweries count should not be negative"
-            print(f"Received {len(breweries)} breweries in {state}")
-        else:
-            print(f"Received breweries in {state}: {breweries}")
+    assert len(breweries) >= 0, "Breweries count should not be negative"
+    print(f"Received {len(breweries)} breweries in {state}")
 
-            if state == "California":
-                assert len(breweries) >= 25, "Expected at least 25 breweries in California"
-            elif state == "Texas":
-                assert len(breweries) >= 20, "Expected at least 20 breweries in Texas"
-            elif state == "New York":
-                assert len(breweries) >= 15, "Expected at least 15 breweries in New York"
+    if expected_length is None:
+        print(f"Received breweries in {state}: {breweries}")
+
+    min_breweries = state_min_breweries.get(state)
+    if min_breweries is not None:
+        assert len(breweries) >= min_breweries, f"Expected at least {min_breweries} breweries in {state}"
+    elif expected_length is not None:
+        assert len(breweries) == expected_length, f"Expected exactly {expected_length} breweries in {state}"
 
 
 @pytest.mark.parametrize("brewery_type, expected_status_code, expected_min_length", [
@@ -78,4 +83,5 @@ def test_filter_breweries_by_type(brewery_type, expected_status_code, expected_m
 
     if expected_status_code == 200:
         breweries = response.json()
-        assert len(breweries) >= expected_min_length, f"Expected at least {expected_min_length} breweries of type {brewery_type}, but got {len(breweries)}"
+        assert len(
+            breweries) >= expected_min_length, f"Expected at least {expected_min_length} breweries of type {brewery_type}, but got {len(breweries)}"
